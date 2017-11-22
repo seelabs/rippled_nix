@@ -1,24 +1,16 @@
 let
-  boost_fun = import ./boost;
-  packages = import ./packages;
-  v1 = import ./v1.nix;
+  hostPkgs = import <nixpkgs> {};
+  rippled_boost166_src = hostPkgs.fetchFromGitHub {
+      owner = "seelabs";
+      repo = "rippled";
+      rev = "502cf54d13efb034b3b1cad37d63bd09f4105b8f";
+      sha256 = "0xqcyi7zg8f8fr7d5yim3sayzmhhfj87w270a71zrhjxzh022bf0";
+  };
 in
   {
-    rippled_800 = v1 rec {
-      stdenv = pkgs.overrideCC pkgs.stdenv pkgs.gcc7;
-      boost = (boost_fun{inherit pkgs;}).boost_static;
-      version = "0.80.0";
-      rev = "cafe18c59279e7de447f25a0e00d0562d6441c7a";
-      sha256 = "17ikdlwbs7cwhfcqv8726n1a1ns6pj0d31y8242sd794gb4p6hcv";
-      pkgs = import packages.v1 {};
-    };
-
-    rippled_boost166 = v1 rec {
-      stdenv = pkgs.overrideCC pkgs.stdenv pkgs.gcc7;
-      boost = (boost_fun{inherit pkgs;}).boost_166rc2;
-      version = "0.80.0";
-      rev = "cafe18c59279e7de447f25a0e00d0562d6441c7a";
-      sha256 = "17ikdlwbs7cwhfcqv8726n1a1ns6pj0d31y8242sd794gb4p6hcv";
-      pkgs = import packages.v1 {};
+    rippled_boost166 = import "${rippled_boost166_src}/Builds/Nix/rippled_generic.nix" {
+      shell = false;
+      version = "0.90.0";
+      src = rippled_boost166_src;
     };
   }
